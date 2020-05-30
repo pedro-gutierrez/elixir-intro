@@ -1,0 +1,71 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: demo
+  namespace: demo
+  labels:
+    app: demo
+  annotations:
+    kubernetes.io/ingress.class: haproxy
+    ingress.kubernetes.io/rewrite-target: "/"
+    ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+    - host: localhost
+      http:
+        paths:
+        - path: /
+          backend:
+            serviceName: demo
+            servicePort: 4000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo
+  labels:
+    app: demo
+  namespace: demo
+spec:
+  selector:
+    app: demo
+  ports:
+    - port: 4000
+      name: web
+      protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo
+  labels:
+    app: demo
+  namespace: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo
+  template:
+    metadata:
+      labels:
+        app: demo
+    spec:
+      containers:
+        - name: demo
+          image: demo
+          stdin: true
+          tty: true
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 4000
+          env:
+            - name: "POD_IP"
+              valueFrom:
+                fieldRef:
+                  fieldPath: "status.podIP"
+                  ##command:
+                  ##  - "bash"
+                  ##  - "-c"
+                  ##  - "iex --name demo@$(POD_IP) --cookie demo -S mix phx.server"

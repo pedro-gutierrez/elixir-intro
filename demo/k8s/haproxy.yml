@@ -1,0 +1,139 @@
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: haproxy
+  namespace: demo
+  labels:
+    app: role
+rules:
+  - apiGroups:
+      - ""
+      - extensions
+      - apps
+      - rbac.authorization.k8s.io
+      - certificates.k8s.io
+      - batch
+      - autoscaling
+      - apiextensions.k8s.io
+      - skpr.io
+    resources: ["*"]
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+      - put
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: haproxy
+  namespace: demo
+  labels:
+    app: role
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: haproxy
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: demo
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: default-backend
+  name: default-backend
+  namespace: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: default-backend
+  template:
+    metadata:
+      labels:
+        app: default-backend
+    spec:
+      containers:
+      - name: ingress-default-backend
+        image: gcr.io/google_containers/defaultbackend:1.0
+        ports:
+          - containerPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: default-backend
+  name: default-backend
+  namespace: demo
+spec:
+  selector:
+    app: default-backend
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: haproxy
+  name: haproxy
+  namespace: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: haproxy
+  template:
+    metadata:
+      labels:
+        app: haproxy
+    spec:
+      containers:
+        - name: haproxy
+          image: quay.io/jcmoraisjr/haproxy-ingress:canary
+          args:
+            - --default-backend-service=demo/default-backend
+          ports:
+          - name: http
+            containerPort: 80
+          env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: haproxy
+  name: haproxy
+  namespace: demo
+spec:
+  selector:
+    app: haproxy
+  type: NodePort
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+      nodePort: 30080
