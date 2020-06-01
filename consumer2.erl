@@ -11,7 +11,8 @@ loop(Items) when is_list(Items) -> % backwards compatibility
 
 loop(Total) -> % optimized code
     receive
-        switch ->
+        {From, switch} ->
+            From ! switching,
             ?MODULE:loop(Total);
     	  		
         {From, total} ->

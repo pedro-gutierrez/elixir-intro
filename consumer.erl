@@ -7,8 +7,8 @@ start() ->
 
 loop(Items) ->
     receive
-        switch ->
-            % will explain later
+        {From, switch} ->
+            From ! switching,
             ?MODULE:loop(Items);
 
         {From, total} ->
