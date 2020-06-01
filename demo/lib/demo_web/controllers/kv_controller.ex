@@ -1,8 +1,10 @@
 defmodule DemoWeb.KvController do
   use DemoWeb, :controller
 
+  @api Demo.Kv
+
   def get(conn, %{"key" => key}) do
-    case Demo.Kv.get(key) do
+    case @api.get(key) do
       {:ok, value} ->
         conn
         |> put_status(200)
@@ -16,21 +18,21 @@ defmodule DemoWeb.KvController do
   end
 
   def put(conn, %{"key" => key, "value" => value}) do
-    case Demo.Kv.put(key, value) do
+    case @api.put(key, value) do
       :ok ->
         conn
         |> put_status(200)
         |> json(%{})
 
-      _ ->
+      {:error, :conflict} ->
         conn
-        |> put_status(500)
+        |> put_status(409)
         |> json(%{})
     end
   end
 
   def delete(conn, %{"key" => key}) do
-    case Demo.Kv.delete(key) do
+    case @api.delete(key) do
       :ok ->
         conn
         |> put_status(200)

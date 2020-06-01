@@ -31,12 +31,12 @@ defmodule DemoWeb.ConnCase do
     end
   end
 
-  setup _ do
-    ## :ok = Ecto.Adapters.SQL.Sandbox.checkout(Demo.Repo)
+  setup tags do
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Demo.Repo)
 
-    ## unless tags[:async] do
-    ##  Ecto.Adapters.SQL.Sandbox.mode(Demo.Repo, {:shared, self()})
-    ## end
+    unless tags[:async] do
+      Ecto.Adapters.SQL.Sandbox.mode(Demo.Repo, {:shared, self()})
+    end
 
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end

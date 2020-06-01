@@ -8,7 +8,7 @@ defmodule Demo.Application do
   def start(_type, _args) do
     children = [
       # Start the Ecto repository
-      # Demo.Repo,
+      Demo.Repo,
       # Start the Telemetry supervisor
       DemoWeb.Telemetry,
       # Start the PubSub system
@@ -21,7 +21,7 @@ defmodule Demo.Application do
       # Start a cluster supervisor for node discovery
       # using libcluster and the configured Kubernetes strategy
       {Cluster.Supervisor,
-       [Application.get_env(:libcluster, :topologies), [name: Demo.ClusterSupervisor]]},
+       [Application.get_env(:libcluster, :topologies) || [], [name: Demo.ClusterSupervisor]]},
 
       # Start a local supervisor for all entries in our key value store
       {DynamicSupervisor, strategy: :one_for_one, name: Demo.KvSupervisor}
@@ -30,7 +30,11 @@ defmodule Demo.Application do
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Demo.Supervisor]
-    Supervisor.start_link(children, opts)
+    pid = Supervisor.start_link(children, opts)
+
+    path = Application.app_dir(:demo, "priv/repo/migrations")
+    Ecto.Migrator.run(Demo.Repo, path, :up, all: true)
+    pid
   end
 
   # Tell Phoenix to update the endpoint configuration

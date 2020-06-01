@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: migrate
+  namespace: sp
+spec:
+  template:
+    spec:
+      containers:
+        - name: migrate
+          image: simplepricing
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 4000
+          command:
+            - "bash"
+            - "-c"
+            - >
+              mix ecto.drop -r SimplePricing.Baseball.Repo --no-compile --no-deps-check;
+              mix ecto.create -r SimplePricing.Baseball.Repo --no-compile --no-deps-check;
+              mix ecto.migrate -r SimplePricing.Baseball.Repo --quiet --no-compile --no-deps-check;
+      restartPolicy: Never

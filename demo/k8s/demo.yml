@@ -61,6 +61,9 @@ spec:
           ports:
             - containerPort: 4000
           env:
+            - name: "DB_HOST"
+              #value: postgres.demo.svc.cluster.local
+              value: postgres
             - name: "POD_IP"
               valueFrom:
                 fieldRef:

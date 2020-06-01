@@ -15,6 +15,11 @@ haproxy:
 	@kubectl delete all --namespace demo -l app=defaut-backend --ignore-not-found
 	@kubectl create -f k8s/haproxy.yml
 
+postgres:
+	@kubectl delete configmap postgres --namespace demo --ignore-not-found
+	@kubectl delete all --namespace demo -l app=postgres --ignore-not-found
+	@kubectl create -f k8s/postgres.yml
+
 demo:
 	@kubectl delete ingress demo --namespace demo --ignore-not-found
 	@kubectl delete all --namespace demo -l app=demo --ignore-not-found

@@ -26,21 +26,6 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-# Configure a clustering strategy based on Kubernetes
-config :libcluster,
-  topologies: [
-    demo: [
-      strategy: Elixir.Cluster.Strategy.Kubernetes,
-      config: [
-        mode: :ip,
-        kubernetes_node_basename: "demo",
-        kubernetes_selector: "app=demo",
-        kubernetes_namespace: "demo",
-        polling_interval: 1000
-      ]
-    ]
-  ]
-
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"

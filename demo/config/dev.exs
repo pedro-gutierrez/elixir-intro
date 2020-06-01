@@ -1,13 +1,13 @@
 use Mix.Config
 
 # Configure your database
-# config :demo, Demo.Repo,
-#  username: "postgres",
-#  password: "postgres",
-#  database: "demo_dev",
-#  hostname: "localhost",
-#  show_sensitive_data_on_connection_error: true,
-#  pool_size: 10
+config :demo, Demo.Repo,
+  username: "demo",
+  password: "demo",
+  database: "demo",
+  hostname: "localhost",
+  show_sensitive_data_on_connection_error: true,
+  pool_size: 10
 
 # For development, we disable any cache and enable
 # debugging and code reloading.

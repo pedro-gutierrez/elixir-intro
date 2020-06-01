@@ -1,6 +1,14 @@
 use Mix.Config
 
 # Configure your database
+config :demo, Demo.Repo,
+  username: "demo",
+  password: "demo",
+  database: "demo_test",
+  hostname: "localhost",
+  show_sensitive_data_on_connection_error: true,
+  pool: Ecto.Adapters.SQL.Sandbox
+
 #
 # The MIX_TEST_PARTITION environment variable can be used
 # to provide built-in test partitioning in CI environment.

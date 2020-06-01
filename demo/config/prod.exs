@@ -19,6 +19,21 @@ config :demo, DemoWeb.Endpoint,
 # Do not print debug messages in production
 config :logger, level: :info
 
+# Configure a clustering strategy based on Kubernetes
+config :libcluster,
+  topologies: [
+    demo: [
+      strategy: Elixir.Cluster.Strategy.Kubernetes,
+      config: [
+        mode: :ip,
+        kubernetes_node_basename: "demo",
+        kubernetes_selector: "app=demo",
+        kubernetes_namespace: "demo",
+        polling_interval: 1000
+      ]
+    ]
+  ]
+
 # ## SSL Support
 #
 # To get SSL working, you will need to add the `https` key
@@ -56,3 +71,4 @@ config :logger, level: :info
 # Finally import the config/prod.secret.exs which loads secrets
 # and configuration from environment variables.
 # import_config "prod.secret.exs"
+#
