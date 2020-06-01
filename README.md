@@ -654,8 +654,9 @@ start() ->
 
 loop(Items) ->
     receive
-        switch ->
-            ?MODULE:loop(Items); % will explain later
+        {From, switch} ->
+            From ! switching,
+            ?MODULE:loop(Items);
 
         {From, total} ->
             From ! {total, length(Items)},
@@ -754,7 +755,7 @@ top(Info) ->
 {<0.93.0>,192505222}
 14> {Suspect, _} = debugger:top(total_heap_size).
 {<0.93.0>,192505222}
-15> 63> Suspect = erlang:whereis(consumer).
+15> Suspect = erlang:whereis(consumer).
 <0.93.0>
 
 ```
@@ -763,22 +764,25 @@ top(Info) ->
 
 ##### Hot code swapping
 
+
+
 ```
-% optimized consumer.erl
+% consumer2.erl
 -module(consumer).
 -export([start/0]).
 -export([loop/1]).   % need this
 
 start() ->
     spawn(fun() -> loop([]) end).
-    
+
 loop(Items) when is_list(Items) -> % backwards compatibility
     loop(length(Items));
 
 loop(Total) -> % optimized code
     receive
-        switch ->
-          ?MODULE:loop(Total); % will explain later
+        {From, switch} ->
+            From ! switching,
+            ?MODULE:loop(Total);
 
         {From, total} ->
             From ! {total, Total, v2},
@@ -789,19 +793,26 @@ loop(Total) -> % optimized code
 ```
 
 ```
+$ cp consumer2.erl consumer.erl
+```
+
+```
 16> c(consumer).
 {ok,consumer}
 17> consumer ! {self(), total}.
 {<0.78.0>,total}
 18> flush().
 Shell got {total,23847380}
-19> consumer ! switch.
-switch
-17> consumer ! {self(), total}, flush().
-Shell got {total,52552090,v2}
-18> erlang:garbage_collect(erlang:whereis(consumer)).
+19> consumer ! {self(), switch}.
+{<0.78.0>,switch}
+20> flush().
+Shell got switching
+21> consumer ! {self(), total}.
+{<0.78.0>,total}
+22> flush().
+Shell got {total,41997632,v2}
+23> erlang:garbage_collect(erlang:whereis(consumer)).
 true
-
 ```
 
 
