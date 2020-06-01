@@ -654,14 +654,15 @@ start() ->
 
 loop(Items) ->
     receive
-        {From, total} = Cmd ->
-            io:format("~p received ~p~n", [self(), Cmd]),
+        switch ->
+            ?MODULE:loop(Items); % will explain later
+
+        {From, total} ->
             From ! {total, length(Items)},
             loop(Items);
         Other ->
-                loop([Other|Items])
+            loop([Other|Items])
     end.
-~
 ```
 
 ```
@@ -692,7 +693,9 @@ launch(Count) ->
 
 ```
 $ erl +P 2000000
+```
 
+```
 Eshell V10.6.4  (abort with ^G)
 1> [ c(Mod) || Mod <- [consumer, producer, launcher]].
 [{ok,consumer},{ok,producer},{ok,launcher}]
@@ -703,16 +706,21 @@ true
 4> launcher:launch(1).
 ok
 5> consumer ! {self(), total}.
-<0.93.0> received {<0.78.0>,total}
-{<0.78.0>,progress}
-6> flush().
-Shell got {progress,200}
+{<0.78.0>,total}
+6> consumer ! {self(), total}.
+{<0.78.0>,total}
 7> consumer ! {self(), total}.
-<0.93.0> received {<0.78.0>,total}
 {<0.78.0>,total}
 8> flush().
-Shell got {total,430}
+Shell got {total,35}
+Shell got {total,78}
+Shell got {total,115}
 ok
+```
+
+
+
+```
 9> launcher:launch(10000).
 ok
 10> launcher:launch(10000).
@@ -722,6 +730,8 @@ ok
 12> length(erlang:processes()).
 30040
 ```
+
+
 
 ```
 % debugger.erl
@@ -746,7 +756,52 @@ top(Info) ->
 {<0.93.0>,192505222}
 15> 63> Suspect = erlang:whereis(consumer).
 <0.93.0>
-15> erlang:exit(Suspect, kill).
+
+```
+
+
+
+##### Hot code swapping
+
+```
+% optimized consumer.erl
+-module(consumer).
+-export([start/0]).
+-export([loop/1]).   % need this
+
+start() ->
+    spawn(fun() -> loop([]) end).
+    
+loop(Items) when is_list(Items) -> % backwards compatibility
+    loop(length(Items));
+
+loop(Total) -> % optimized code
+    receive
+        switch ->
+          ?MODULE:loop(Total); % will explain later
+
+        {From, total} ->
+            From ! {total, Total, v2},
+            loop(Total);
+        _ ->
+            loop(Total+1)
+    end.
+```
+
+```
+16> c(consumer).
+{ok,consumer}
+17> consumer ! {self(), total}.
+{<0.78.0>,total}
+18> flush().
+Shell got {total,23847380}
+19> consumer ! switch.
+switch
+17> consumer ! {self(), total}, flush().
+Shell got {total,52552090,v2}
+18> erlang:garbage_collect(erlang:whereis(consumer)).
+true
+
 ```
 
 
