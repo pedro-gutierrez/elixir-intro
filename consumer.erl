@@ -7,10 +7,13 @@ start() ->
 
 loop(Items) ->
     receive
-        {From, total} = Cmd ->
-            io:format("~p received ~p~n", [self(), Cmd]),
+        switch ->
+            % will explain later
+            ?MODULE:loop(Items);
+
+        {From, total} ->
             From ! {total, length(Items)},
             loop(Items);
         Other ->
-        		loop([Other|Items])
+            loop([Other|Items])
     end.
