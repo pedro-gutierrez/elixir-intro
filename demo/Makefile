@@ -25,6 +25,19 @@ demo:
 	@kubectl delete all --namespace demo -l app=demo --ignore-not-found
 	@kubectl create -f k8s/demo.yml
 
+web: 
+	@open http://localhost:30080
+
+dashboard: 
+	@open http://localhost:30080/dashboard
+
+
+put: 
+	curl -i -X PUT http://localhost:30080/keys/$(key)/$(value)
+
+get:
+	curl -i http://localhost:30080/keys/$(key)
+
 scale:
 	@kubectl scale deployment demo -n demo --replicas=$(replicas)
 

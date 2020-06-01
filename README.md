@@ -30,23 +30,7 @@
 * Pager Duty
 * Discord
 
-### What is Erlang good for
 
-- monitoring systems that oversee and coordinate thousands of virtual machines.
-- distributed databases (RIAK and CouchDB are success stories). 
-- web-based dashboards that show or chart real-time data.
-- service oriented software architectures. (RabbitMQ is a success story.)
-- specialized high-performance web services like an ad server, or **API** endpoints. 
-- for applications that benefit from having a **distributed, multi-node** architecture.
--  **soft real-time** applications (video streaming is *soft* real-time). 
-- for **stateful** binary communications
-- for other **long-running daemons** and services. (As opposed to request-response based web pages, or scripts.)
-
-### But **not** so good for...
-
-- web applications that don't involve real-time communications (which includes most web stuff: CRUD (create/retrieve/update/delete) apps, forms, admin UIs, websites).
-- computation-heavy tasks.
-- string operations: parsers, transformations, etc..
 
 ### History
 
@@ -72,8 +56,6 @@
 * Whatsapp
 * RabbitMQ
 
-
-
 ### Features
 
 Erlang is a **strongly**, **dynamically** typed language. Source code (.erl) compiles to bytecode (.beam) and is loaded and run into the **Erlang Virtual Machine** (BEAM). 
@@ -81,14 +63,11 @@ Erlang is a **strongly**, **dynamically** typed language. Source code (.erl) com
 Erlang's runtime system has built-in support for:
 
 * concurrency,
-
 * distribution
-
 * fault tolerance.
-
 * debugging and observability
 
-  
+It is designed for highly parallel, scalable applications requiring high uptime. Relies on a preemptive scheduler.
 
 #### Immutable data
 
