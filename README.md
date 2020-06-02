@@ -1169,6 +1169,7 @@ iex> Enum.map(stream, &(&1 + 1))
 
 * [Hex](https://hex.pm) (The package manager for the Erlang ecosystem)
 * [Phoenix Framework](https://www.phoenixframework.org)  (Web,  development, Scalable Pub/Sub)
+* [Phoenix LiveView](https://github.com/phoenixframework/phoenix_live_view) Rich, real-time user experiences with server-rendered HTML 
 * [Ecto](https://hexdocs.pm/ecto/Ecto.html) (ORM with first class support for Postgres)
 * [Mix](https://elixir-lang.org/getting-started/mix-otp/introduction-to-mix.html) (Tooling, automation)
 
@@ -1242,6 +1243,15 @@ $ make pods
 $ make logs
 $ make web
 $ make dashboard
+```
+
+
+
+![dashboard](./dashboard.png)
+
+
+
+```
 $ make put key=foo value=bar
 
 curl -i -X PUT http://localhost:30080/keys/foo/bar
@@ -1279,6 +1289,7 @@ $ make scale replicas=0
 $ make scale replicas=0
 $ make get key=foo
 $ make sh
+
 # bin/demo remote
 
 Erlang/OTP 22 [erts-10.6.4] [source] [64-bit] [smp:2:2] [ds:2:2:10] [async-threads:1]
