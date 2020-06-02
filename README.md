@@ -804,21 +804,21 @@ $ cp consumer2.erl consumer.erl
 ```
 
 ```
-16> c(consumer).
+19> c(consumer).
 {ok,consumer}
-17> consumer ! {self(), total}.
+20> consumer ! {self(), total}.
 {<0.78.0>,total}
-18> flush().
+21> flush().
 Shell got {total,23847380}
-19> consumer ! {self(), switch}.
+22> consumer ! {self(), switch}.
 {<0.78.0>,switch}
-20> flush().
+23> flush().
 Shell got switching
-21> consumer ! {self(), total}.
+24> consumer ! {self(), total}.
 {<0.78.0>,total}
-22> flush().
+25> flush().
 Shell got {total,41997632,v2}
-23> erlang:garbage_collect(erlang:whereis(consumer)).
+26> erlang:garbage_collect(erlang:whereis(consumer)).
 true
 ```
 
