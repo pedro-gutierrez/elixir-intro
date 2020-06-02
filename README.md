@@ -1168,9 +1168,9 @@ iex> Enum.map(stream, &(&1 + 1))
 
 ## Elixir major projects
 
-* Phoenix Framework (Web,  development, Scalable Pub/Sub)
-* Ecto (ORM with first class support for Postgres)
-* Mix (Tooling, automation)
+* [Phoenix Framework](https://www.phoenixframework.org)  (Web,  development, Scalable Pub/Sub)
+* [Ecto](https://hexdocs.pm/ecto/Ecto.html) (ORM with first class support for Postgres)
+* [Mix](https://elixir-lang.org/getting-started/mix-otp/introduction-to-mix.html) (Tooling, automation)
 
 ```
 $ mix phx.new myproject
@@ -1195,8 +1195,8 @@ $ mix deps.update jason
 $ mix release
 ```
 
-* Nerves (Embedded Devices)
-* LibCluster (Automatic cluster formation/healing for Elixir applications)
+* [Nerves](https://www.nerves-project.org) (IoT and Embedded Devices)
+* [LibCluster](https://github.com/bitwalker/libcluster) (Automatic cluster formation/healing for Elixir applications)
 
 ```
 config :libcluster,
@@ -1211,10 +1211,10 @@ config :libcluster,
         polling_interval: 10_000]]]
 ```
 
-* Horde
-* Swarm
-* Riak Core (Erlang)
-* ExUnit
+* [Horde](https://github.com/derekkraan/horde) (Elixir distributed Supervisor and Registry backed by DeltaCrdt)
+* [Swarm](https://github.com/bitwalker/swarm) (Easy clustering, registration, and distribution of worker processes for Erlang/Elixir)
+* [Riak Core](https://github.com/basho/riak_core) (Distributed systems infrastructure used by Riak)
+* [ExUnit](https://hexdocs.pm/ex_unit/ExUnit.html) Unit testing framework for Elixir
 
 ```
 defmodule ExampleTest do
