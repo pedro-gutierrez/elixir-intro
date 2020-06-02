@@ -721,6 +721,7 @@ Shell got {total,35}
 Shell got {total,78}
 Shell got {total,115}
 9> observer:start().
+ok
 ```
 
 
@@ -751,22 +752,20 @@ top(Info) ->
 ```
 
 ```
-12> c(debugger).
+14> c(debugger).
 {ok,debugger}
-13> debugger:top(total_heap_size).
+15> debugger:top(total_heap_size).
 {<0.93.0>,114432973}
-13> debugger:top(total_heap_size).
+16> debugger:top(total_heap_size).
 {<0.93.0>,192505222}
-14> {Suspect, _} = debugger:top(total_heap_size).
+17> {Suspect, _} = debugger:top(total_heap_size).
 {<0.93.0>,192505222}
-15> Suspect = erlang:whereis(consumer).
+18> Suspect = erlang:whereis(consumer).
 <0.93.0>
 
 ```
 
-```
 
-```
 
 
 
