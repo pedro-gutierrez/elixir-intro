@@ -720,19 +720,19 @@ ok
 Shell got {total,35}
 Shell got {total,78}
 Shell got {total,115}
-ok
+9> observer:start().
 ```
 
 
 
 ```
-9> launcher:launch(10000).
-ok
 10> launcher:launch(10000).
 ok
 11> launcher:launch(10000).
 ok
-12> length(erlang:processes()).
+12> launcher:launch(10000).
+ok
+13> length(erlang:processes()).
 30040
 ```
 
@@ -761,6 +761,10 @@ top(Info) ->
 {<0.93.0>,192505222}
 15> Suspect = erlang:whereis(consumer).
 <0.93.0>
+
+```
+
+```
 
 ```
 
@@ -1168,6 +1172,7 @@ iex> Enum.map(stream, &(&1 + 1))
 
 ## Elixir major projects
 
+* [Hex](https://hex.pm) (The package manager for the Erlang ecosystem)
 * [Phoenix Framework](https://www.phoenixframework.org)  (Web,  development, Scalable Pub/Sub)
 * [Ecto](https://hexdocs.pm/ecto/Ecto.html) (ORM with first class support for Postgres)
 * [Mix](https://elixir-lang.org/getting-started/mix-otp/introduction-to-mix.html) (Tooling, automation)
