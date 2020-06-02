@@ -220,12 +220,17 @@ sum([First|Rest], Acc) ->
 Eshell V10.6.4  (abort with ^G)
 1> Hello = fun() -> io:format("Hello from ~p~n", [self()]) end.
 #Fun<erl_eval.21.126501267>
-2> Hello().
+2> self().
+<0.78.0>
+3> Hello().
 Hello from <0.78.0>
 ok
-3> Pid = spawn(Hello).
-Hello from <0.82.0>
-<0.82.0>
+4> Hello().
+Hello from <0.78.0>
+ok
+5> Pid = spawn(Hello).
+Hello from <0.84.0>
+<0.84.0>
 ```
 
 * Message passing is the only way for processes to interact. 
@@ -237,7 +242,7 @@ Hello from <0.82.0>
 
 loop() ->
     receive
-        {hello, From} ->
+        {hi, From} ->
             From ! {hello, self()},
             loop()
     end.
@@ -249,8 +254,8 @@ Eshell V10.6.4  (abort with ^G)
 {ok,hello}
 2> Pid = spawn(fun hello:loop/0).
 <0.85.0>
-3> Pid ! {hello, self()}.
-{hello,<0.78.0>}
+3> Pid ! {hi, self()}.
+{hi,<0.78.0>}
 4> flush().
 Shell got {hello,<0.85.0>}
 ok
@@ -261,7 +266,7 @@ ok
 ```
 5> erlang:register(greeter, Pid).
 true
-6> greeter ! {hello, self()}.
+6> greeter ! {hi, self()}.
 {hello,<0.78.0>}
 7> flush().
 Shell got {hello,<0.85.0>}

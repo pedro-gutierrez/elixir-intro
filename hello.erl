@@ -3,7 +3,7 @@
 
 loop() ->
     receive
-        {hello, From} ->
+        {hi, From} ->
             From ! {hello, self()},
             loop()
     end.
