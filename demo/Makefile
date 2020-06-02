@@ -25,6 +25,9 @@ demo:
 	@kubectl delete all --namespace demo -l app=demo --ignore-not-found
 	@kubectl create -f k8s/demo.yml
 
+watch:
+	@watch kubectl get pods -n demo
+
 web: 
 	@open http://localhost:30080
 
@@ -48,4 +51,4 @@ logs:
 	@kubectl logs -n demo -f `kubectl get pods -n demo | grep demo | head -n 1 | cut -d " " -f 1`
 
 sh:
-	@kubectl exec -it -n demo `kubectl get pods -n demo | grep demo | cut -d " " -f 1` -- sh
+	@kubectl exec -it -n demo `kubectl get pods -n demo | grep demo | head -n 1 | cut -d " " -f 1` -- sh

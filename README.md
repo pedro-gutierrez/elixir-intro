@@ -1229,6 +1229,69 @@ end
 
 
 
+## Elixir Kubernetes demo
+
+```
+$ cd demo
+$ make namespace
+$ make watch
+$ make haproxy
+$ make postgres
+$ make demo
+$ make pods
+$ make logs
+$ make web
+$ make dashboard
+$ make put key=foo value=bar
+
+curl -i -X PUT http://localhost:30080/keys/foo/bar
+HTTP/1.1 200 OK
+cache-control: max-age=0, private, must-revalidate
+content-length: 2
+content-type: application/json; charset=utf-8
+date: Tue, 02 Jun 2020 07:37:58 GMT
+server: Cowboy
+x-request-id: FhSp_nQjK_FU3AgAAADh
+
+{}
+
+$ make get key=foo
+
+curl -i http://localhost:30080/keys/foo
+HTTP/1.1 200 OK
+cache-control: max-age=0, private, must-revalidate
+content-length: 13
+content-type: application/json; charset=utf-8
+date: Tue, 02 Jun 2020 07:38:09 GMT
+server: Cowboy
+x-request-id: FhSqARCyscmmaX8AAADx
+
+{"foo":"bar"}
+
+...
+
+$ make put key=foo value=baz
+$ make get key=foo
+$ make scale replicas=3
+$ make scale replicas=2
+$ make scale replicas=3
+$ make scale replicas=0
+$ make scale replicas=0
+$ make get key=foo
+$ make sh
+# bin/demo remote
+
+Erlang/OTP 22 [erts-10.6.4] [source] [64-bit] [smp:2:2] [ds:2:2:10] [async-threads:1]
+
+Interactive Elixir (1.10.1) - press Ctrl+C to exit (type h() ENTER for help)
+iex(demo@10.1.0.108)1> Node.list
+[:"demo@10.1.0.110", :"demo@10.1.0.109"]
+
+iex(demo@10.1.0.108)2> 
+```
+
+
+
 ## Other language on the Beam
 
 - LFE (Lisp Flavoured Erlang)
@@ -1267,6 +1330,8 @@ end
 * Elixir in Action (Sara Juric)
 * Erlang/OTP in Action
 * Design for scalability with Erlang/OTP (Francesco Cesarini)
+
+
 
 ## Similar projects in other languages
 
