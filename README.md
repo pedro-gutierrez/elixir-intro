@@ -1071,10 +1071,9 @@ iex> Enum.map(stream, &(&1 + 1))
 
 - Python-like docstrings
 - Polymorphism via protocols
+- Configuration
 
-
-
-## Projects
+## Elixir major projects
 
 * Phoenix Framework (Web,  development, Scalable Pub/Sub)
 * Ecto (ORM)
@@ -1084,6 +1083,8 @@ iex> Enum.map(stream, &(&1 + 1))
 $ mix phx.new myproject
 $ mix deps.get
 $ mix compile
+$ mix docs
+$ mix test
 $ mix ecto.migrate
 $ mix hex.info jason
 
@@ -1102,6 +1103,35 @@ $ mix release
 ```
 
 * Nerves (Embedded Devices)
+* LibCluster (Automatic cluster formation/healing for Elixir applications)
+
+```
+config :libcluster,
+  topologies: [
+    k8s_example: [
+      strategy: Elixir.Cluster.Strategy.Kubernetes,
+      config: [
+        mode: :ip,
+        kubernetes_node_basename: "myapp",
+        kubernetes_selector: "app=myapp",
+        kubernetes_namespace: "my_namespace",
+        polling_interval: 10_000]]]
+```
+
+* Horde
+* Swarm
+* ExUnit
+
+```
+defmodule ExampleTest do
+  use ExUnit.Case
+  doctest Example
+
+  test "greets the world" do
+    assert Example.hello() == :world
+  end
+end
+```
 
 
 
