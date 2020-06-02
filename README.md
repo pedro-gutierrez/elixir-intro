@@ -206,7 +206,7 @@ Eshell V10.6.4  (abort with ^G)
 23
 ```
 
-- Favor tail recursion
+- Use tail recursion
 
 ```
 -module(tail_reducer).
@@ -219,6 +219,14 @@ sum(List) ->
 sum([], Acc) -> Acc;
 sum([First|Rest], Acc) ->
 	sum(Rest, Acc+First).
+```
+
+```
+Eshell V10.6.4  (abort with ^G)
+1> c(tail_reducer).
+{ok,tail_reducer}
+2> tail_reducer:sum([1, 5, 7, 10]).
+23
 ```
 
 
@@ -327,8 +335,7 @@ loop(State) ->
 
 ```
 Eshell V10.6.4  (abort with ^G)
-1> c(kv)
-1> .
+1> c(kv).
 {ok,kv}
 2> Pid = kv:start().
 <0.85.0>
@@ -350,7 +357,8 @@ ok
 9> Pid ! finish.
 unrecognized message: finish. Exiting..
 finish
-10>
+10> erlang:process_info(Pid).
+undefined
 ```
 
 
