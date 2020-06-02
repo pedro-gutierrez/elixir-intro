@@ -101,14 +101,28 @@ Eshell V10.6.4  (abort with ^G)
 - Modules have no state. There is no global memory.
 - Functions operate on arguments.
 - Functions are identified by their name and arity.
+- Functions can have clauses, and guards.
 - Functions can be passed as arguments to other functions
 
 ```
--module(hello).
--export([hello/1]).
+-module(foo).
+-export([foo/0, foo/1]).
 
-hello(From) ->
-    {hello, From}.
+foo() -> foo(0).
+foo(N) when is_number(N) -> {foo, N};
+foo(Fun) -> {foo, Fun()}.
+```
+
+```
+Eshell V10.6.4  (abort with ^G)
+1> c(foo).
+{ok,foo}
+2> foo:foo().
+{foo,0}
+3> foo:foo(1).
+{foo,1}
+4> foo:foo(fun() -> 2*3 end).
+{foo,6}
 ```
 
 
