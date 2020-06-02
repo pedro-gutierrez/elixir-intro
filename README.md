@@ -1165,8 +1165,9 @@ iex> Enum.map(stream, &(&1 + 1))
 
 
 
-## Elixir major projects
+## Elixir & Erlang major projects
 
+* [Cowboy](https://ninenines.eu) (Small, fast, modern HTTP server)
 * [Hex](https://hex.pm) (The package manager for the Erlang ecosystem)
 * [Phoenix Framework](https://www.phoenixframework.org)  (Web,  development, Scalable Pub/Sub)
 * [Phoenix LiveView](https://github.com/phoenixframework/phoenix_live_view) Rich, real-time user experiences with server-rendered HTML 
@@ -1279,7 +1280,6 @@ x-request-id: FhSqARCyscmmaX8AAADx
 {"foo":"bar"}
 
 ...
-
 $ make put key=foo value=baz
 $ make get key=foo
 $ make scale replicas=3
