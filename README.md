@@ -34,8 +34,7 @@
 
 ### History
 
-* Originally developed in 1986 by Ericsson.
-* Joe Armstrong and Robert Virding main inventors
+* Originally developed in 1986 by Ericsson, by Joe Armstrong, Mike Williams and Robert Virding as the main inventors
 * Named after Danish mathematician and engineer Agner Krarup Erlang
 * Originally implemented in Prolog
 * Suitable for prototyping telephone exchanges, but too slow
@@ -51,7 +50,7 @@
 ### Products
 
 * Ejabberd
-* Apache CouchDB
+* Apache CouchDB / IBM Cloudant
 * Riak KV
 * Whatsapp
 * RabbitMQ
@@ -870,12 +869,43 @@ ok
 
 ### OTP
 
- OTP stands for *Open Telecom Platform*. A collection of libraries, abstractions and standards designed to help build robust applications, based on Erlang concurrency primitives.
+OTP stands for *Open Telecom Platform*. A collection of libraries, abstractions and standards designed to help build robust applications, based on Erlang concurrency primitives.
 
-* Releases
-* Applications
+```
+├── otp
+│   └── release
+│       ├── application1
+│       │   └── supervisor
+│       │       ├── child_sup1
+│       │       │   ├── gen_server1
+│       │       │   ├── gen_server2
+│       │       │   └── gen_servier3
+│       │       └── child_sup2
+│       └── application2
+│           └── supervisor
+```
+
+* **Releases** package up applications, runtime options and configuration in a single deliverable.
+* **Applications** organize groups of logic as supervision trees 
+
+```
+% my_app.erl
+-module(my_app).
+-behaviour(application).
+
+-export([start/2, stop/1]).
+
+start(_Type, _Args) ->
+    my_sup:start_link().
+
+stop(_State) ->
+    ok.
+```
+
+
 
 ````
+# my/application.ex
 defmodule My.Application do
   use Application
 
@@ -886,7 +916,28 @@ defmodule My.Application do
 end
 ````
 
-* Supervisors
+* **Supervisors** form supervision trees and manage the lifecycle of child supervisor and worker processes
+
+```
+-module(my_supervisor).
+-behaviour(supervisor).
+
+-export([start_link/0]).
+-export([init/1]).
+
+start_link() ->
+    supervisor:start_link(?MODULE, []).
+
+init(_Args) ->
+    SupFlags = #{strategy => one_for_one, intensity => 1, period => 5},
+    ChildSpecs = [#{id => my_worker,
+                    start => {my_worker, start_link, []},
+                    restart => permanent,
+                    shutdown => brutal_kill,
+                    type => worker,
+                    modules => [my_worker]}],
+    {ok, {SupFlags, ChildSpecs}}.
+```
 
 ```
 # child specs
@@ -902,18 +953,66 @@ ops = [strategy: :one_for_one, name: My.Supervisor]
 {:ok, pid} = Supervisor.start_link(children, opts)
 ```
 
-* Dynamic Supervisors
+More on supervisors: https://erlang.org/doc/design_principles/sup_princ.html
+
+- **Dynamic Supervisors** are a special kind of supervisors in Elixir (similar to the `simple_one_to_one` strategy in Erlang)
 
 ```
 # Dynamically add a new worker as a child to the supervisor
 {:ok, agent1} = DynamicSupervisor.start_child(My.DynamicSupervisor, {My.Stack, []})
 ```
 
-* Generic Servers
+* **Generic Servers** are battle tested worker processes.
+
+```
+-module(my_stack).
+-behaviour(gen_server).
+
+-export([start_link/0]).
+-export([pop/0, push/1]).
+-export([init/1, handle_call/3, handle_cast/2]).
+
+% Public Api
+start_link() ->
+    gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
+
+pop() ->
+    gen_server:call(?MODULE, pop).
+
+push(Element) ->
+    gen_server:cast(?MODULE, {push, Element}).
+
+% Callbacks
+
+init(Stack) ->
+    {ok, Stack}.
+
+handle_call(pop, _From, [Head|Tail]) ->
+    {reply, Head, Tail}.
+
+handle_cast({push, Element}, Stack) ->
+    {noreply, [Element|Stack]}.
+```
+
+
 
 ```
 defmodule My.Stack do
   use GenServer
+  
+  # Public api
+  
+  def start_link() do
+  	GenServer.start_link(Stack, [], name: __MODULE__)
+  end
+  
+  def pop() do
+  	GenServer.call(__MODULE__, :pop)
+  end
+  
+  def push(element) do
+  	GenServer.cast(__MODULE__, {:push, element})
+  end
 
   # Callbacks
 
@@ -932,20 +1031,9 @@ defmodule My.Stack do
     {:noreply, [element | state]}
   end
 end
-
-# Start the server
-{:ok, pid} = GenServer.start_link(Stack, [:hello])
-
-# This is the client
-GenServer.call(pid, :pop)
-#=> :hello
-
-GenServer.cast(pid, {:push, :world})
-#=> :ok
-
-GenServer.call(pid, :pop)
-#=> :world
 ```
+
+More on GenServers: https://erlang.org/doc/design_principles/gen_server_concepts.html
 
 
 
@@ -979,9 +1067,7 @@ defmodule Fun do
 end
 ```
 
-
-
-- Variables can be re-bound!! 
+- Variable rebinding
 
 ```
 $ iex
@@ -1071,12 +1157,14 @@ iex> Enum.map(stream, &(&1 + 1))
 
 - Python-like docstrings
 - Polymorphism via protocols
-- Configuration
+- Configuration per environment
+
+
 
 ## Elixir major projects
 
 * Phoenix Framework (Web,  development, Scalable Pub/Sub)
-* Ecto (ORM)
+* Ecto (ORM with first class support for Postgres)
 * Mix (Tooling, automation)
 
 ```
@@ -1120,6 +1208,7 @@ config :libcluster,
 
 * Horde
 * Swarm
+* Riak Core (Erlang)
 * ExUnit
 
 ```
@@ -1149,19 +1238,21 @@ end
 ## Famous quotes
 
 * "If Java is 'write once, run anywhere', then Erlang is 'write once, run forever'.”
+
 * "The problem with object-oriented languages is they’ve got all this implicit environment that they carry around with them. You wanted a banana but what you got was a gorilla holding the banana and the entire jungle".
 
+* "Make it work, then make it beautiful, then if you really, really have to, make it fast. 90 percent of the time, if you make it beautiful, it will already be fast. So really, just make it beautiful!"
 
-
-
+  
 
 ## Links
 
 * https://www.erlang.org
 * https://elixir-lang.org
-* 
+* https://www.phoenixframework.org
+* https://www.youtube.com/watch?v=uKfKtXYLG78 (Erlang, the movie)
+* https://www.youtube.com/watch?v=JvBT4XBdoUE (The soul of Erlang, by Sara Juric)
 * https://www.erlang-solutions.com/blog/let-s-talkconcurrency-panel-discussion-with-sir-tony-hoare-joe-armstrong-and-carl-hewitt.html
-* https://www.youtube.com/watch?v=JvBT4XBdoUE (Sara Juric)
 
 
 
@@ -1171,4 +1262,10 @@ end
 * Elixir in Action (Sara Juric)
 * Erlang/OTP in Action
 * Design for scalability with Erlang/OTP (Francesco Cesarini)
+
+## Similar projects in other languages
+
+* Akka (Scala, JVM) https://akka.io
+* Microsoft Orleans https://github.com/dotnet/orleans
+* Proto actor (Go) https://github.com/AsynkronIT/protoactor-go 
 
