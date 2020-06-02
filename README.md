@@ -767,11 +767,7 @@ top(Info) ->
 
 
 
-
-
-##### Hot code swapping
-
-
+#### Hot code swapping
 
 ```
 % consumer2.erl
@@ -824,7 +820,7 @@ true
 
 
 
-##### Sync vs Async
+#### Sync vs async
 
 - Message passing between process is async.
 - Sync can be built on top of async
@@ -875,9 +871,9 @@ ok
 
 
 
-### OTP
+#### OTP
 
-OTP stands for *Open Telecom Platform*. A collection of libraries, abstractions and standards designed to help build robust applications, based on Erlang concurrency primitives.
+OTP stands for ***Open Telecom Platform***. A collection of libraries, abstractions and standards designed to help build robust applications, based on Erlang concurrency primitives.
 
 ```
 ├── otp
@@ -894,7 +890,7 @@ OTP stands for *Open Telecom Platform*. A collection of libraries, abstractions 
 ```
 
 * **Releases** package up applications, runtime options and configuration in a single deliverable.
-* **Applications** organize groups of logic as supervision trees 
+* **Applications** organize groups of stateful logic as supervision trees 
 
 ```
 % my_app.erl
