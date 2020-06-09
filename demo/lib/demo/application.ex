@@ -24,7 +24,10 @@ defmodule Demo.Application do
        [Application.get_env(:libcluster, :topologies) || [], [name: Demo.ClusterSupervisor]]},
 
       # Start a local supervisor for all entries in our key value store
-      {DynamicSupervisor, strategy: :one_for_one, name: Demo.KvSupervisor}
+      {DynamicSupervisor, strategy: :one_for_one, max_restarts: 5000, max_seconds: 1, name: Demo.KvSupervisor},
+      
+      # Start a supervisor for load tests
+      {DynamicSupervisor, strategy: :one_for_one, max_restarts: 5000, max_seconds: 1, name: Demo.LoadSupervisor}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

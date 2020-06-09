@@ -39,9 +39,16 @@ defmodule Demo.KvEntry do
   end
 
   def write(key, version, value) do
-    %__MODULE__{}
-    |> changeset(%{key: key, version: version, value: value})
-    |> Repo.insert()
+    case :rand.uniform(3) do
+      3 ->
+        2 = 3
+
+      _ ->
+
+        %__MODULE__{}
+        |> changeset(%{key: key, version: version, value: value})
+        |> Repo.insert()
+    end
   end
 
   def delete(key) do

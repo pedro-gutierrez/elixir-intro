@@ -20,7 +20,7 @@ defmodule Demo.MixProject do
   def application do
     [
       mod: {Demo.Application, []},
-      extra_applications: [:logger, :runtime_tools, :os_mon]
+      extra_applications: [:logger, :runtime_tools, :os_mon, :httpoison]
     ]
   end
 
@@ -46,7 +46,9 @@ defmodule Demo.MixProject do
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
-      {:libcluster, "~> 3.2"}
+      {:libcluster, "~> 3.2"},
+      {:httpoison, "~> 1.6"},
+      { :uuid, "~> 1.1" }
     ]
   end
 

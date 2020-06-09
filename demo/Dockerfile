@@ -2,7 +2,6 @@
 FROM hexpm/elixir:1.10.1-erlang-22.2.6-alpine-3.11.3 as builder
 ENV MIX_ENV=prod
 ENV VERSION=1
-#ENV SECRET_KEY_BASE Ivi53MMWxsLWhw7c1xsnofouF7c7PLRaFpNAZKTqpciG+9UKesyUNVFJZsZM8vs8
 RUN apk add --update git build-base
 WORKDIR /opt/app
 COPY mix.* /opt/app/

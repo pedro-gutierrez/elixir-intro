@@ -68,6 +68,33 @@ Erlang's runtime system has built-in support for:
 
 It is designed for highly parallel, scalable applications requiring high uptime. Relies on a preemptive scheduler.
 
+#### Basic data types
+
+* **Term**: a piece of data, of any type
+* **Number**: `1`, `2.76`, `1_000_000`
+* **Atom**: a literal, a constant with a name. Eg. `ok`, `error` or
+    `'node@127.0.0.1'`.
+* **Boolean**: there is no such a thing in Erlang. We use atoms `true` and
+    `false`.
+* **String**: enclosed in double quotes, but they are not a data type in
+    Erlang. For example, string `"hello"` is just a short hand for the
+    list of integers `[$h,$e,$l,$l,$o]` or `[104,101,108,108,111]`.
+* **Binaries**: used to store an area of untyped memory, eg: `<<"Hello">>`.
+* **Reference**: a term that is unique in the Erlang runtime. Used when
+    monitoring processes.
+
+* **Fun**: `Fun1 = fun (X) -> X+1 end`.
+* **Pid**: a process identifier, as returned by `spawn` or `spawn_link`. Eg:
+    `<0.78.0>`
+* **Tuple**: compound data with fixed number of terms. Eg: `{Term1, Term2,
+    ..., TermN}`
+* **Map**: a key-value association. Eg: `#{ <<"a">> => 1, a => 1, ... }`
+* **List**: compound data with variable number of terms. Eg: `[Head|Tail] =
+    [a, b, c, d]`
+
+
+
+
 #### Immutable data
 
 - No variable assignment, but variable binding.
@@ -129,6 +156,8 @@ Eshell V10.6.4  (abort with ^G)
 
 #### Pattern matching
 
+- Matching Lists:
+
 ```
 Eshell V10.6.4  (abort with ^G)
 1> MyList = [1, 2, 3].
@@ -139,7 +168,11 @@ Eshell V10.6.4  (abort with ^G)
 1
 4> Tail.
 [2,3]
+```
 
+- Matching tuples:
+
+```
 5> Cmd = {self(), put, a, 1}.
 {<0.78.0>,put,a,1}
 6> {From, put, Key, Value} = Cmd.
@@ -151,6 +184,100 @@ a
 9> Value.
 1
 ```
+
+- Matching Maps
+
+```
+Eshell V10.6.4  (abort with ^G)
+1> MyMap = #{ a => 1, <<"a">> => 2, "a" => 3 }.
+#{a => 1,"a" => 3,<<"a">> => 2}
+2> #{a := Value} = MyMap.
+#{a => 1,"a" => 3,<<"a">> => 2}
+3> Value.
+1
+4> #{<<"a">> := BinaryCount, "a" := CharCount} = MyMap.
+#{a => 1,"a" => 3,<<"a">> => 2}
+5> BinaryCount.
+2
+6> CharCount.
+3
+```
+
+
+
+```
+-module(payment_api).
+-export([handle/1]).
+
+handle(#{ method := <<"POST">>,
+          path := <<"/v1/payments">>,
+          params := #{
+            id := PaymentId
+           },
+          headers := #{
+            authorization := <<"Bearer ", Token/binary>>
+           },
+          body := #{
+            from := From,
+             to := To,
+             amount := Amount,
+             currency := Currency
+           }
+        }) ->
+
+    {ok, Token, PaymentId, From, To, Amount, Currency}.
+```
+
+```
+Eshell V10.6.4  (abort with ^G)
+1> c(payment_api).
+{ok,payment_api}
+2> payment_api:handle(#{ method => <<"POST">>, path => <<"/v1/payments">>, params => #{ id => <<"abc">> }, headers => #{ authorization => <<"Bearer xyz">>}, body => #{ from => <<"bob">>, to => <<"alice">>, amount => 10.5, currency => <<"EUR">> }}).
+{ok,<<"xyz">>,<<"abc">>,<<"bob">>,<<"alice">>,10.5,
+    <<"EUR">>}
+    
+3> payment_api:handle(#{ method => <<"POST">>, path => <<"/v1/payments">>, params => #{ id => <<"abc">> }, headers => #{ authorization => "Bearer xyz"}, body => #{ from => <<"bob">>, to => <<"alice">>, amount => 10.5, currency => <<"EUR">> }}).
+** exception error: no function clause matching
+                    payment_api:handle(...)
+```
+
+
+
+- Matching an IBAN number:
+
+https://res.cloudinary.com/worldremit/image/upload/v1579794457/images/faq/What_is_an_IBAN_number.png
+
+```
+-module(iban_checker).
+-export([check/1]).
+
+check(<<CountryCode:2/binary,
+        CheckNumber:2/binary,
+        BankIdentifier:4/binary,
+        SortCode:6/binary,
+        AccountNumber:8/binary
+      >>) -> {ok, #{
+                country => CountryCode,
+                check_number => CheckNumber,
+                bank => BankIdentifier,
+                sort_code => SortCode,
+                account => AccountNumber
+               }};
+check(_) -> error.
+```
+
+```
+Eshell V10.6.4  (abort with ^G)
+1> c(iban_checker).
+2> iban_checker:check(<<"GB12ABCD89011111167800">>).
+{ok,#{account => <<"11167800">>,bank => <<"ABCD">>,
+      check_number => <<"12">>,country => <<"GB">>,
+      sort_code => <<"890111">>}}
+3> iban_checker:check(<<"GB12ABCDE89011111167800">>).
+error
+```
+
+- Matching an IP datagram
 
 ```
 -define(IP_VERSION, 4).
@@ -184,6 +311,28 @@ end.
 12> [Count || {kids, Count} <- MyList ].
 [3]
 ```
+
+This is the same as:
+
+```
+13> lists:map(fun ({pet, Kind, Count}) -> {Kind, Count} end, lists:filter(fun ({pet, _, _}) -> true; (_) -> false end, MyList)).
+
+14> lists:map(fun ({kids, Count}) -> Count end, lists:filter(fun ({kids, _}) -> true; (_) -> false end, MyList)).
+
+
+```
+
+However:
+
+```
+11> lists:map(fun ({pet, Kind, Count}) -> {Kind, Count} end, lists:filter(fun ({pet, _, _}) -> true end, MyList)).
+exception error: no function clause matching
+                    erl_eval:'-inside-an-interpreted-fun-'({kids,
+                                                             3})
+                                                             ...
+```
+
+
 
 #### Recursion
 
@@ -1257,12 +1406,11 @@ end
 
 ```
 $ cd demo
-$ make namespace
-$ make watch
+$ make watch 
+$ make namespace 
 $ make haproxy
 $ make postgres
 $ make demo
-$ make pods
 $ make logs
 $ make web
 $ make dashboard
@@ -1336,7 +1484,7 @@ iex(demo@10.1.0.108)2>
 
 
 
-## Famous quotes
+## Joe Armstrong's famous quotes
 
 * "If Java is 'write once, run anywhere', then Erlang is 'write once, run forever'.”
 
@@ -1366,7 +1514,7 @@ iex(demo@10.1.0.108)2>
 
 
 
-## Similar projects in other languages
+## Erlang style concurrency examples
 
 * Akka (Scala, JVM) https://akka.io
 * Microsoft Orleans https://github.com/dotnet/orleans

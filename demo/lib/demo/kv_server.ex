@@ -9,7 +9,7 @@ defmodule Demo.KvServer do
   
   # The inactivity timeout after which we stop
   # the GenServer in order to free resources
-  @ttl 5000
+  @ttl 10000
 
   use GenServer, restart: :transient
   require Logger
@@ -24,7 +24,7 @@ defmodule Demo.KvServer do
 
   @impl true
   def init(key) do
-    Logger.info("Pid #{inspect(self())} for #{key} is starting")
+    Logger.warn("Pid #{inspect(self())} for key #{key} is starting with ttl #{@ttl}")
     
     # We continue the initialization of this GenServer 
     # in a handle_continue/2 callback. This is because the 
@@ -115,7 +115,7 @@ defmodule Demo.KvServer do
     # we can stop this process for now, and free up some resources. 
     #
     # The values in the backend for this key won't be touched.
-    Logger.warn("Pid #{inspect(self())} for #{key} is stopping")
+    Logger.warn("Pid #{inspect(self())} for key #{key} is stopping")
     {:stop, :normal, state}
   end
 

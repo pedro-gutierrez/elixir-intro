@@ -27,6 +27,11 @@ defmodule DemoWeb.Router do
     delete "/:key", KvController, :delete
   end
 
+  scope "/load", DemoWeb do
+    pipe_through :api
+    post "/:count", LoadController, :load
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", DemoWeb do
   #   pipe_through :api

@@ -30,6 +30,12 @@ config :demo, DemoWeb.Endpoint,
     ]
   ]
 
+# Load test configuration
+config :demo, Demo.Loader,
+  target: "http://localhost:30080",
+  sleep: 2000
+
+
 # ## SSL Support
 #
 # In order to use HTTPS in development, a self-signed

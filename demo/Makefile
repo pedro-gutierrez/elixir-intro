@@ -4,6 +4,9 @@ dev:
 docker:
 	@docker build -t demo .
 
+docker-no-cache:
+	@docker build --no-cache -t demo .
+
 namespace:
 	@kubectl delete ns demo --ignore-not-found
 	@kubectl create ns demo 
@@ -40,6 +43,9 @@ put:
 
 get:
 	curl -i http://localhost:30080/keys/$(key)
+
+load:
+	curl -i -X POST http://localhost:4000/load/$(count)
 
 scale:
 	@kubectl scale deployment demo -n demo --replicas=$(replicas)
