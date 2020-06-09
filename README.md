@@ -54,6 +54,7 @@
 * Riak KV
 * Whatsapp
 * RabbitMQ
+* Aeternity
 
 ### Features
 
