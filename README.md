@@ -1047,19 +1047,7 @@ ok
 
 OTP stands for ***Open Telecom Platform***. A collection of libraries, abstractions and standards designed to help build robust applications, based on Erlang concurrency primitives.
 
-```
-├── otp
-│   └── release
-│       ├── application1
-│       │   └── supervisor
-│       │       ├── child_sup1
-│       │       │   ├── gen_server1
-│       │       │   ├── gen_server2
-│       │       │   └── gen_servier3
-│       │       └── child_sup2
-│       └── application2
-│           └── supervisor
-```
+![OTP](otp.png)
 
 * **Releases** package up applications, runtime options and configuration in a single deliverable.
 * **Applications** organize groups of stateful logic as supervision trees 
@@ -1123,7 +1111,7 @@ children = [
 ]
 
 # strategy and name
-ops = [strategy: :one_for_one, name: My.Supervisor]
+ops = [strategy: :one_for_one, max_restarts: 1, max_seconds: 5, name: My.Supervisor]
 
 
 {:ok, pid} = Supervisor.start_link(children, opts)
