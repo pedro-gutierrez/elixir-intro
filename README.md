@@ -1,5 +1,11 @@
 # Erlang & Elixir intro
 
+## Robert Virding's first rule of programming
+
+"Any sufficiently complicated concurrent program in another language
+contains an ad hoc informally-specified bug-ridden slow implementation
+of half of Erlang."
+
 ## Erlang
 
 **Erlang** is a programming language used to build massively **scalable**, **soft real-time** systems with requirements on **high availability**.
